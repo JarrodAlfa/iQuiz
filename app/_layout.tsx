@@ -1,8 +1,15 @@
 import { Stack } from "expo-router";
+import Header from "./header";
 
 export default function RootLayout() {
-  return <Stack>
-      <Stack.Screen name="index" options={{ title: 'Home' }} />
-      <Stack.Screen name="question" options={{ title: 'Question' }} />
-    </Stack>
+  return (
+    <>
+      <Header />
+      <Stack
+        screenOptions={{
+          headerShown: false,
+        }}
+      />
+    </>
+  )
 }

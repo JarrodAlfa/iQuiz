@@ -3,8 +3,7 @@ import { ScrollView, StyleSheet, View } from "react-native";
 
 export default function Index() {
   return (
-    <ScrollView contentContainerStyle={styles.container}
-    >
+    <ScrollView contentContainerStyle={styles.container}>
       <View>
         <Link href="/question">Reken vraag</Link>
       </View>
