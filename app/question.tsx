@@ -1,16 +1,8 @@
-import { useFonts } from 'expo-font';
-import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Image, ImageBackground, Keyboard, Pressable, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View } from "react-native";
+import { ReturnButton } from './selection';
 
 export default function Question() {
-      const router = useRouter();
-
-      //fonts
-      const [loaded] = useFonts({
-        MainFont: require('../assets/fonts/LeagueSpartan-ExtraBold.ttf'),
-      });
-
       //question variables
       const [value1, setValue1] = useState(getRandom(25, 75));
       const [value2, setValue2] = useState(getRandom(25, 75));
@@ -80,34 +72,9 @@ export default function Question() {
               }}
               />
           </Pressable>
-
-          <Pressable
-            onPress={() => router.navigate('/')} //TODO verander dit later
-            style={({pressed}) => [
-              styles.returnbutton,
-              {
-                transform: [{ scale: pressed ? 0.95 : 1}],
-                shadowOpacity: pressed ? 0 : 0.3
-              }
-            ]}
-          >
-            <Image
-              source={require('../assets/images/return_arrow.png')}
-              style={{
-                width: 32,
-                height: 32,
-              }}
-            />
-
-            <Text
-              style={{
-                fontFamily: 'MainFont',
-                fontSize: 20,
-              }}
-            >
-              Keer terug
-            </Text>
-          </Pressable>
+          <ReturnButton
+            type='/selection'
+          />
       </View>
     </TouchableWithoutFeedback>
   );
@@ -117,6 +84,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: '#FDFBD4',
     flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
   },
 
@@ -148,7 +116,7 @@ const styles = StyleSheet.create({
 
   answerboxinside: {
     fontFamily: 'MainFont',
-    fontSize: 18,
+    fontSize: 20,
 
     paddingTop: 5,
     paddingHorizontal: 30,
@@ -165,16 +133,6 @@ const styles = StyleSheet.create({
 
   confirmbutton: {
     marginBottom: 10,
-
-    shadowColor: '#000',
-    shadowOffset: { width: 4, height: 4},
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-  },
-
-  returnbutton: {
-    flexDirection: 'row',
-    alignItems: 'center',
 
     shadowColor: '#000',
     shadowOffset: { width: 4, height: 4},

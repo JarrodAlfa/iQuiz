@@ -1,12 +1,18 @@
+import { useFonts } from 'expo-font';
 import { useRouter } from "expo-router";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function Header() {
+    const [loaded] = useFonts({
+            MainFont: require('../assets/fonts/LeagueSpartan-ExtraBold.ttf'),
+          });
+    
+    const insets = useSafeAreaInsets();
     const router = useRouter();
 
     return (
-        <SafeAreaView style={styles.container}
+        <View style={[styles.container, { paddingTop: insets.top }]}
         >
             <Pressable 
                 onPress={() => router.navigate('/')}
@@ -31,7 +37,7 @@ export default function Header() {
                     style={styles.icon}
                 />
 
-                <Text>123</Text>
+                <Text style={styles.text}>123</Text>
             </View>
 
             <View style={styles.shadows}>
@@ -40,7 +46,7 @@ export default function Header() {
                     style={styles.icon}
                 />
 
-                <Text>123</Text>
+                <Text style={styles.text}>123</Text>
             </View>
 
             <View style={styles.shadows}>
@@ -49,19 +55,26 @@ export default function Header() {
                     style={styles.icon}
                 />
 
-                <Text>123</Text>
+                <Text style={styles.text}>123</Text>
             </View>
-        </SafeAreaView>
+        </View>
     )
 }
 
 const styles = StyleSheet.create({
         container: {
             height: 125,
-            backgroundColor: '#FDFBD4',
+            backgroundColor: 'transparent',
             justifyContent: 'space-evenly',
             alignItems: 'center',
             flexDirection: 'row',
+
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+
+            zIndex: 10,
         },
 
         profile_button: {
@@ -90,5 +103,11 @@ const styles = StyleSheet.create({
             shadowOffset: { width: 4, height: 4},
             shadowOpacity: 0.3,
             shadowRadius: 4,
+        },
+        
+        text: {
+            lineHeight: 50,
+            fontFamily: 'MainFont',
+            fontSize: 16,
         }
     });
