@@ -1,7 +1,7 @@
 import { useRouter } from "expo-router";
-import { Image, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { ImageBackground, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
-export function CreateButton({image, subject, imagewidth, imageheight, type, questiontype}: {image: any; subject: string; imagewidth: number; imageheight: number; type: any; questiontype: any;}) {
+export function CreateButton({image, subject, imagewidth, imageheight, type, questiontype, text, fontsize, color}: {image: any; subject: string; imagewidth: number; imageheight: number; type: any; questiontype: any; text: string; fontsize: number; color: string}) {
   const router = useRouter();
 
   return (
@@ -19,13 +19,26 @@ export function CreateButton({image, subject, imagewidth, imageheight, type, que
         },
       ]}
     >
-      <Image
+      <ImageBackground
         source={image}
         style={{
           width: imagewidth,
-          height: imageheight
+          height: imageheight,
+          justifyContent: 'center',
+          alignItems: 'center',
         }}
-      />
+      >
+        <Text
+          style={{
+            textAlign: 'center',
+            fontFamily: 'MainFont',
+            fontSize: fontsize,
+            color: color,
+          }}
+        >
+          {text}
+        </Text>
+      </ImageBackground>
     </Pressable>
   );
 }
@@ -41,6 +54,9 @@ export default function Index() {
           imageheight={135}
           type='/selection'
           questiontype=''
+          text='Rekenen'
+          fontsize={36}
+          color="#427D42"
         />
 
         <CreateButton
@@ -50,6 +66,9 @@ export default function Index() {
           imageheight={135}
           type='/selection'
           questiontype=''
+          text='Taal'
+          fontsize={36}
+          color='#B43024'
         />
 
         <CreateButton
@@ -59,6 +78,9 @@ export default function Index() {
           imageheight={135}
           type='/selection'
           questiontype=''
+          text='Topografie'
+          fontsize={36}
+          color='#4A88C4'
         />
 
         <CreateButton
@@ -68,6 +90,9 @@ export default function Index() {
           imageheight={135}
           type='/selection'
           questiontype=''
+          text='Winkel'
+          fontsize={36}
+          color='#B49616'
         />
       </ScrollView>
     </View>

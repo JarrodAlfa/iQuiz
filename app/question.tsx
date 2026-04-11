@@ -1,40 +1,245 @@
+import { useLocalSearchParams } from "expo-router";
 import React, { useState } from 'react';
+import type { KeyboardTypeOptions } from 'react-native';
 import { Image, ImageBackground, Keyboard, Pressable, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View } from "react-native";
 import { ReturnButton } from './selection';
 
 export default function Question() {
-      //question variables
-      const [value1, setValue1] = useState(getRandom(25, 75));
-      const [value2, setValue2] = useState(getRandom(25, 75));
-      const correctAnswer = value1 + value2;
+  const { subject, questiontype } = useLocalSearchParams();
 
-      //player variables
-      const [answer, setAnswer] = useState('');
+  function getRandom(min: number, max: number) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+      
+  //question variables
+  const [keyboardType, setKeyboardType] = useState<KeyboardTypeOptions>('default');
 
-      function genQuestion() {
-        setValue1(getRandom(25, 75))
-        setValue2(getRandom(25, 75))
-        setAnswer('')
+  const [value1, setValue1] = useState(getRandom(25, 75));
+  const [value2, setValue2] = useState(getRandom(25, 75));
+  const [questionType, setQuestionType] = useState(0);
+  const [correctAnswer, setCorrectAnswer] = useState(0)
+  
+  const langWords: [string, string][] = [
+    ['dog', 'hond'],
+    ['cat', 'kat'],
+    ['bird', 'vogel'],
+    ['fish', 'vis'],
+    ['horse', 'paard'],
+    ['cow', 'koe'],
+    ['pig', 'varken'],
+    ['sheep', 'schaap'],
+    ['goat', 'geit'],
+
+    ['house', 'huis'],
+    ['door', 'deur'],
+    ['window', 'raam'],
+    ['chair', 'stoel'],
+    ['table', 'tafel'],
+    ['bed', 'bed'], // ok, lijkt anders genoeg
+
+    ['tree', 'boom'],
+    ['flower', 'bloem'],
+    ['grass', 'gras'],
+    ['leaf', 'blad'],
+
+    ['sun', 'zon'],
+    ['moon', 'maan'],
+    ['star', 'ster'],
+    ['sky', 'lucht'],
+    ['cloud', 'wolk'],
+    ['rain', 'regen'],
+    ['snow', 'sneeuw'],
+    ['wind', 'wind'], // borderline maar ok
+
+    ['day', 'dag'],
+    ['night', 'nacht'],
+    ['morning', 'ochtend'],
+    ['evening', 'avond'],
+
+    ['red', 'rood'],
+    ['blue', 'blauw'],
+    ['green', 'groen'],
+    ['yellow', 'geel'],
+    ['black', 'zwart'],
+    ['white', 'wit'],
+
+    ['big', 'groot'],
+    ['small', 'klein'],
+    ['long', 'lang'],
+    ['short', 'kort'],
+    ['fast', 'snel'],
+    ['slow', 'langzaam'],
+
+    ['happy', 'blij'],
+    ['sad', 'verdrietig'],
+    ['angry', 'boos'],
+    ['tired', 'moe'],
+
+    ['eat', 'eten'],
+    ['drink', 'drinken'],
+    ['sleep', 'slapen'],
+    ['run', 'rennen'],
+    ['walk', 'lopen'],
+    ['jump', 'springen'],
+
+    ['father', 'vader'],
+    ['mother', 'moeder'],
+    ['brother', 'broer'],
+    ['sister', 'zus'],
+    ['friend', 'vriend'],
+  ];
+
+  const [currentWordIndex, setCurrentWordIndex] = useState(getRandom(0, langWords.length - 1))
+  const [eWord, dWord] = langWords[currentWordIndex] ?? ['', ''];
+
+  React.useEffect(() => {
+    GenerateQuestion();
+  }, []);
+
+  //player variables
+  const [answer, setAnswer] = useState('');
+
+  function checkAnswer() {
+
+    if (subject === 'Rekenen') {
+      if (Number(answer) === correctAnswer) {
+        GenerateQuestion();
+      } else {
+        setAnswer('');
       }
-
-      function checkAnswer() {
-        if (Number(answer) === correctAnswer) {
-          genQuestion();
+    } else if (subject === 'Taal') {
+      if (questiontype === 'english') {
+        if (answer.trim().toLowerCase() === dWord.trim().toLowerCase()) {
+          GenerateQuestion();
         } else {
-          setAnswer('')
+          setAnswer('');
         }
+      } else if (questiontype === 'dutch') {
+        if (answer.trim().toLowerCase() === eWord.trim().toLowerCase()) {
+          GenerateQuestion();
+        } else {
+          setAnswer('');
+        }        
       }
+    }
+  }
 
-      function getRandom(min: number, max: number) {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
+  function GenerateQuestion() {
+    if (subject === 'Rekenen') {
+      setKeyboardType('numeric')
+    } else if (subject === 'Taal') {
+      setKeyboardType('default')
+    }
+
+    if ( questiontype === 'english' || questiontype === 'dutch') {
+      let newIndex;
+      do {
+        newIndex = getRandom(0, langWords.length - 1);
+      } while (newIndex === currentWordIndex);
+
+      setCurrentWordIndex(newIndex);
+    }
+
+    const newQuestionType = getRandom(0,1)
+
+    if ( questiontype === 'addsubtract') {
+
+      if (newQuestionType === 0) {
+        const newValue1 = getRandom(25, 75)
+        const newValue2 = getRandom(25, 75)
+
+        setValue1(newValue1)
+        setValue2(newValue2)
+        setCorrectAnswer(newValue1 + newValue2)
+        setQuestionType(newQuestionType)
+      } else {
+        const newValue1 = getRandom(25, 75)
+        const newValue2 = getRandom(25, newValue1)
+
+        setValue1(newValue1)
+        setValue2(newValue2)
+        setCorrectAnswer(newValue1 - newValue2)
+        setQuestionType(newQuestionType)
       }
+    } else if ( questiontype === 'multiplydivide') {
+      if (newQuestionType === 0) {
+        const newValue1 = getRandom(1, 12)
+        const newValue2 = getRandom(1, 12)
+
+        setValue1(newValue1)
+        setValue2(newValue2)
+        setCorrectAnswer(Math.ceil(newValue1 * newValue2))
+        setQuestionType(newQuestionType)
+      } else {
+        const newAnswer = getRandom(2, 10)
+        const newValue2 = getRandom(2, 10)
+        const newValue1 = newAnswer * newValue2
+
+        setValue1(newValue1)
+        setValue2(newValue2)
+        setCorrectAnswer(newAnswer)
+        setQuestionType(newQuestionType)
+      }
+    } else if (questiontype === 'fractionpercentage') {
+
+    }
+
+    setAnswer('')
+  }
+
+  function RenderQuestion() {
+    if (questiontype === 'english') {
+      return (
+        <View style={styles.languageQuestion}>
+          <Text style={styles.topText}>Vertaal het woord</Text>
+          <Text style={styles.wordHighlight}>{eWord}</Text>
+          <Text style={styles.bottomText}>naar het Nederlands</Text>
+        </View>
+      );
+    }
+
+    if (questiontype === 'dutch') {
+      return (
+        <View style={styles.languageQuestion}>
+          <Text style={styles.topText}>Vertaal het woord</Text>
+          <Text style={styles.wordHighlight}>{dWord}</Text>
+          <Text style={styles.bottomText}>naar het Engels</Text>
+        </View>
+      );
+    }
+
+    return (
+      <Text style={styles.questiontext}>
+        {GetQuestion()}
+      </Text>
+    );
+  }
+
+  function GetQuestion() {
+    if (questiontype === 'addsubtract') {
+      if (questionType === 0) {
+        return 'Wat is ' + value1 + ' + ' + value2 + ' ?'
+      }
+      else {
+        return 'Wat is ' + value1 + ' - ' + value2 + ' ?'
+      }
+    } else if (questiontype === 'multiplydivide')
+    {
+      if (questionType === 0) {
+        return 'Wat is ' + value1 + ' x ' + value2 + ' ?'
+      }
+      else {
+        return 'Wat is ' + value1 + ' ÷ ' + value2 + ' ?'
+      }
+    }
+  }
     
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
           <View style={styles.questionbox}>
             <Text style={styles.questiontext}>
-              Wat is {value1} + {value2} ?
+              {RenderQuestion()}
             </Text>
           </View>
 
@@ -48,9 +253,11 @@ export default function Question() {
             <TextInput
               onChangeText={setAnswer}
               value={answer}
-              placeholder='.....'
-              placeholderTextColor={'#000000'}
-              keyboardType="numeric"
+              placeholder="....."
+              placeholderTextColor="#000000"
+              keyboardType={keyboardType}
+              autoCorrect={false}
+              autoCapitalize="none"
               style={styles.answerboxinside}
             />
           </ImageBackground>
@@ -111,7 +318,10 @@ const styles = StyleSheet.create({
     fontFamily: 'MainFont',
     fontSize: 26,
 
+    lineHeight: 36,
+
     textAlign: 'center',
+    paddingHorizontal: 20
   },
 
   answerboxinside: {
@@ -138,5 +348,33 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 4, height: 4},
     shadowOpacity: 0.3,
     shadowRadius: 4,
+  },
+
+  languageQuestion: {
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 20,
+  },
+
+  topText: {
+    fontFamily: 'MainFont',
+    fontSize: 24,
+    textAlign: 'center',
+    marginBottom: 22,
+  },
+
+  wordHighlight: {
+    textDecorationLine: 'underline',
+    fontFamily: 'MainFont',
+    fontSize: 30,
+    textAlign: 'center',
+    marginBottom: 22,
+  },
+
+  bottomText: {
+    fontFamily: 'MainFont',
+    fontSize: 24,
+    textAlign: 'center',
   },
 });

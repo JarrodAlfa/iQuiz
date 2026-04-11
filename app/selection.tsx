@@ -58,6 +58,9 @@ export default function Selection() {
             imageheight={85}
             type='/question'
             questiontype='addsubtract'
+            text='Optellen en Aftrekken'
+            fontsize={26}
+            color="#427D42"
           />
 
           <CreateButton
@@ -67,16 +70,22 @@ export default function Selection() {
             imageheight={85}
             type='/question'
             questiontype='multiplydivide'
+            text='Vermenigvuldigen en delen'
+            fontsize={26}
+            color='#B43024'
           />
 
-          <CreateButton
+          {/* <CreateButton
             image={require('../assets/images/math_selection_3.png')}
             subject='Rekenen'
             imagewidth={350}
             imageheight={85}
             type='/question'
             questiontype='fractionpercentage'
-          />
+            text='Breuken en procenten'
+            fontsize={26}
+            color='#4A88C4'
+          /> */}
        </>
       );
     }
@@ -91,6 +100,9 @@ export default function Selection() {
             imageheight={85}
             type='/question'
             questiontype='english'
+            text='Engels - Nederlands'
+            fontsize={26}
+            color='#4A88C4'
           />
 
           <CreateButton
@@ -100,6 +112,9 @@ export default function Selection() {
             imageheight={85}
             type='/question'
             questiontype='dutch'
+            text='Nederlands - Engels'
+            fontsize={26}
+            color='#B49616'
           />
        </>
       );
@@ -115,6 +130,9 @@ export default function Selection() {
             imageheight={85}
             type='/question'
             questiontype='netherlands'
+            text='Nederland'
+            fontsize={26}
+            color='#B49616'
           />
        </>
       );
