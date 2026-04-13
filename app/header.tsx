@@ -1,7 +1,9 @@
 import { useFonts } from 'expo-font';
 import { useRouter } from "expo-router";
+import React from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useStats } from './StatsContext';
 
 export default function Header() {
     const [loaded] = useFonts({
@@ -10,6 +12,8 @@ export default function Header() {
     
     const insets = useSafeAreaInsets();
     const router = useRouter();
+
+    const { hearts, coins, streak } = useStats();
 
     return (
         <View style={[styles.container, { paddingTop: insets.top }]}
@@ -37,7 +41,7 @@ export default function Header() {
                     style={styles.icon}
                 />
 
-                <Text style={styles.text}>123</Text>
+                <Text style={styles.text}>{hearts}</Text>
             </View>
 
             <View style={styles.shadows}>
@@ -46,7 +50,7 @@ export default function Header() {
                     style={styles.icon}
                 />
 
-                <Text style={styles.text}>123</Text>
+                <Text style={styles.text}>{coins}</Text>
             </View>
 
             <View style={styles.shadows}>
@@ -55,7 +59,7 @@ export default function Header() {
                     style={styles.icon}
                 />
 
-                <Text style={styles.text}>123</Text>
+                <Text style={styles.text}>{streak}</Text>
             </View>
         </View>
     )

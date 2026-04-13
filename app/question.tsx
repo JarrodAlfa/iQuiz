@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import type { KeyboardTypeOptions } from 'react-native';
 import { Image, ImageBackground, Keyboard, Pressable, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View } from "react-native";
 import { ReturnButton } from './selection';
+import { useStats } from './StatsContext';
 
 export default function Question() {
   const { subject, questiontype } = useLocalSearchParams();
@@ -96,6 +97,9 @@ export default function Question() {
     GenerateQuestion();
   }, []);
 
+  //header stats
+  const { addCoins, removeCoins, addHearts, removeHearts, addStreak, resetStreak } = useStats();
+
   //player variables
   const [answer, setAnswer] = useState('');
 
@@ -104,21 +108,30 @@ export default function Question() {
     if (subject === 'Rekenen') {
       if (Number(answer) === correctAnswer) {
         GenerateQuestion();
+        addCoins(getRandom(1, 10))
+        addStreak();
       } else {
         setAnswer('');
+        resetStreak();
       }
     } else if (subject === 'Taal') {
       if (questiontype === 'english') {
         if (answer.trim().toLowerCase() === dWord.trim().toLowerCase()) {
           GenerateQuestion();
+          addCoins(getRandom(1, 10))
+          addStreak();
         } else {
           setAnswer('');
+          resetStreak();
         }
       } else if (questiontype === 'dutch') {
         if (answer.trim().toLowerCase() === eWord.trim().toLowerCase()) {
           GenerateQuestion();
+          addCoins(getRandom(1, 10))
+          addStreak();
         } else {
           setAnswer('');
+          resetStreak();
         }        
       }
     }
