@@ -29,7 +29,7 @@ export default function Header() {
                 ]}>
 
                 <Image
-                source={require('../assets/images/profile_button.png')}
+                source={require('../assets/images/home_button.png')}
                 style={styles.profile_button}
                 />
 

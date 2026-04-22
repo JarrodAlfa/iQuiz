@@ -4,27 +4,31 @@ type StatsContextType = {
   hearts: number;
   coins: number;
   streak: number;
+  oldStreak: number;
   addHearts: (amount: number) => void;
-  removeHearts: (amount: number) => void;
+  removeHeart: () => void;
   addCoins: (amount: number) => void;
   removeCoins: (amount: number) => void;
   addStreak: () => void;
   resetStreak: () => void;
+  purchaseHeart: () => void;
+  recoverStreak: () => void;
 };
 
 const StatsContext = createContext<StatsContextType | undefined>(undefined);
 
 export function StatsProvider({ children }: { children: React.ReactNode}) {
     const [hearts, setHearts] = useState(5);
-    const [coins, setCoins] = useState(0)
+    const [coins, setCoins] = useState(15)
     const [streak, setStreak] = useState(0);
+    const [oldStreak, setOldStreak] = useState(0);
 
     function addHearts(amount: number) {
         setHearts(prev => prev + amount);
     }
 
-    function removeHearts(amount: number) {
-        setHearts(prev => prev - amount);
+    function removeHeart() {
+        setHearts(prev => prev - 1);
     }
 
     function addCoins(amount: number) {
@@ -40,7 +44,22 @@ export function StatsProvider({ children }: { children: React.ReactNode}) {
     }
 
     function resetStreak() {
+        setOldStreak(streak);
         setStreak(0);
+    }
+
+    function purchaseHeart() {
+        if (coins >= 20){
+            setCoins(prev => prev - 20)
+            setHearts(prev => prev + 1)
+        }
+    }
+
+    function recoverStreak() {
+        if (streak === 0 && coins >= 100){
+            setCoins(prev => prev - 100)
+            setStreak(oldStreak);
+        }
     }
 
     return (
@@ -49,12 +68,15 @@ export function StatsProvider({ children }: { children: React.ReactNode}) {
                 hearts,
                 coins,
                 streak,
+                oldStreak,
                 addHearts,
-                removeHearts,
+                removeHeart,
                 addCoins,
                 removeCoins,
                 addStreak,
                 resetStreak,
+                purchaseHeart,
+                recoverStreak,
             }}
         >
             {children}

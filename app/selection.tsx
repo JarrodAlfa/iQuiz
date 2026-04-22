@@ -1,51 +1,53 @@
 import { useFonts } from 'expo-font';
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React from 'react';
-import { Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Image, ImageBackground, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { CreateButton } from './index';
+import { useStats } from './StatsContext';
 
-  export function ReturnButton({type}: {type: any}) {
-    const [loaded] = useFonts({
-      MainFont: require('../assets/fonts/LeagueSpartan-ExtraBold.ttf'),
-    });
-    const router = useRouter();
-    const { subject, questiontype } = useLocalSearchParams();
+export function ReturnButton({type}: {type: any}) {
+  const [loaded] = useFonts({
+    MainFont: require('../assets/fonts/LeagueSpartan-ExtraBold.ttf'),
+  });
+  const router = useRouter();
+  const { subject, questiontype } = useLocalSearchParams();
 
-    return (
-      <Pressable
-        onPress={() => router.push({
-          pathname: type,
-          params: { subject, questiontype }
-        })}
-        style={({pressed}) => [
-          styles.returnbutton,
-          {
-            transform: [{ scale: pressed ? 0.95 : 1}],
-            shadowOpacity: pressed ? 0 : 0.3
-          },
-        ]}
+  return (
+    <Pressable
+      onPress={() => router.push({
+        pathname: type,
+        params: { subject, questiontype }
+      })}
+      style={({pressed}) => [
+        styles.returnbutton,
+        {
+          transform: [{ scale: pressed ? 0.95 : 1}],
+          shadowOpacity: pressed ? 0 : 0.3
+        },
+      ]}
+    >
+      <Image
+        source={require('../assets/images/return_arrow.png')}
+        style={{
+          width: 32,
+          height: 32,
+        }}
+      />
+      <Text
+        style={{
+          fontFamily: 'MainFont',
+          fontSize: 20,
+        }}
       >
-        <Image
-          source={require('../assets/images/return_arrow.png')}
-          style={{
-            width: 32,
-            height: 32,
-          }}
-        />
-        <Text
-          style={{
-            fontFamily: 'MainFont',
-            fontSize: 20,
-          }}
-        >
-          Keer terug
-        </Text>
-      </Pressable>
-    );
-  }
+        Keer terug
+      </Text>
+    </Pressable>
+  );
+}
 
 export default function Selection() {
   const { subject } = useLocalSearchParams();
+  const { purchaseHeart, recoverStreak } = useStats();
 
   function CreateUI() {
     if (subject === 'Rekenen') {
@@ -135,6 +137,82 @@ export default function Selection() {
             color='#B49616'
           />
        </>
+      );
+    }
+
+    if (subject === 'Winkel') {
+      return (
+        <>
+          <Pressable
+            onPress={() => {
+              purchaseHeart();
+            }}
+
+          style={({pressed}) => [
+            styles.button_shadows,
+            {
+              transform: [{ scale: pressed ? 0.95 : 1}],
+              shadowOpacity: pressed ? 0 : 0.3
+            },
+          ]}
+          >
+            <ImageBackground
+              source={require('../assets/images/health_button.png')}
+              style={{
+                width: 350,
+                height: 85,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <Text
+                style={{
+                  textAlign: 'center',
+                  fontFamily: 'MainFont',
+                  fontSize: 26,
+                  color: '#D84336',
+                }}
+              >
+                1 Hart = 20 Munten
+              </Text>
+            </ImageBackground>
+          </Pressable>
+
+          <Pressable
+            onPress={() => {
+              recoverStreak();
+            }}
+
+          style={({pressed}) => [
+            styles.button_shadows,
+            {
+              transform: [{ scale: pressed ? 0.95 : 1}],
+              shadowOpacity: pressed ? 0 : 0.3
+            },
+          ]}
+          >
+            <ImageBackground
+              source={require('../assets/images/streak_button.png')}
+              style={{
+                width: 350,
+                height: 85,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <Text
+                style={{
+                  textAlign: 'center',
+                  fontFamily: 'MainFont',
+                  fontSize: 26,
+                  color: '#E09223',
+                }}
+              >
+                Streak herstellen = 100 Munten
+              </Text>
+            </ImageBackground>
+          </Pressable>
+        </>
       );
     }
   }

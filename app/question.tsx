@@ -19,6 +19,36 @@ export default function Question() {
   const [value2, setValue2] = useState(getRandom(25, 75));
   const [questionType, setQuestionType] = useState(0);
   const [correctAnswer, setCorrectAnswer] = useState(0)
+
+  const topoQuestions: [string, string][] = [
+    ['Assen','Drenthe'],
+    ['Groningen','Groningen'],
+    ['Leeuwarden','Friesland'],
+    ['Zwolle','Overijssel'],
+    ['Lelystad','Flevoland'],
+    ['Arnhem','Gelderland'],
+    ['Nijmegen','Gelderland'],
+    ['Utrecht','Utrecht'],
+    ['Amsterdam','Noord-Holland'],
+    ['Haarlem','Noord-Holland'],
+    ['Alkmaar','Noord-Holland'],
+    ['Den Haag','Zuid-Holland'],
+    ['Rotterdam','Zuid-Holland'],
+    ['Leiden','Zuid-Holland'],
+    ['Dordrecht','Zuid-Holland'],
+    ['Middelburg','Zeeland'],
+    ['Goes','Zeeland'],
+    ['Tilburg','Noord-Brabant'],
+    ['Eindhoven','Noord-Brabant'],
+    ['Breda','Noord-Brabant'],
+    ['’s-Hertogenbosch','Noord-Brabant'],
+    ['Maastricht','Limburg'],
+    ['Heerlen','Limburg'],
+    ['Roermond','Limburg']
+  ];
+
+  const [currenQuestionIndex, setCurrentQuestionIndex] = useState(getRandom(0, topoQuestions.length - 1))
+  const [qTopo, aTopo] = topoQuestions[currenQuestionIndex] ?? ['',''];
   
   const langWords: [string, string][] = [
     ['dog', 'hond'],
@@ -36,7 +66,7 @@ export default function Question() {
     ['window', 'raam'],
     ['chair', 'stoel'],
     ['table', 'tafel'],
-    ['bed', 'bed'], // ok, lijkt anders genoeg
+    ['bed', 'bed'],
 
     ['tree', 'boom'],
     ['flower', 'bloem'],
@@ -50,7 +80,7 @@ export default function Question() {
     ['cloud', 'wolk'],
     ['rain', 'regen'],
     ['snow', 'sneeuw'],
-    ['wind', 'wind'], // borderline maar ok
+    ['wind', 'wind'],
 
     ['day', 'dag'],
     ['night', 'nacht'],
@@ -98,41 +128,58 @@ export default function Question() {
   }, []);
 
   //header stats
-  const { addCoins, removeCoins, addHearts, removeHearts, addStreak, resetStreak } = useStats();
+  const { addCoins, addStreak, resetStreak, hearts, removeHeart } = useStats();
 
   //player variables
   const [answer, setAnswer] = useState('');
 
-  function checkAnswer() {
+  function questionReward() {
+    GenerateQuestion();
+    if (hearts > 0) {
+      addCoins(getRandom(1, 10))
+      addStreak();
+    }
+  }
 
-    if (subject === 'Rekenen') {
-      if (Number(answer) === correctAnswer) {
-        GenerateQuestion();
-        addCoins(getRandom(1, 10))
-        addStreak();
-      } else {
-        setAnswer('');
-        resetStreak();
-      }
-    } else if (subject === 'Taal') {
-      if (questiontype === 'english') {
-        if (answer.trim().toLowerCase() === dWord.trim().toLowerCase()) {
-          GenerateQuestion();
-          addCoins(getRandom(1, 10))
-          addStreak();
+  function questionPenalty() {
+    setAnswer('');
+    resetStreak();
+    if (hearts > 0) {
+      removeHeart();
+    }
+    GenerateQuestion();
+  }
+
+  function checkAnswer() {
+    if (answer !== '') {
+      if (subject === 'Rekenen') {
+        if (Number(answer) === correctAnswer) {
+          questionReward();
         } else {
-          setAnswer('');
-          resetStreak();
+          questionPenalty();
         }
-      } else if (questiontype === 'dutch') {
-        if (answer.trim().toLowerCase() === eWord.trim().toLowerCase()) {
-          GenerateQuestion();
-          addCoins(getRandom(1, 10))
-          addStreak();
-        } else {
-          setAnswer('');
-          resetStreak();
-        }        
+      } else if (subject === 'Taal') {
+        if (questiontype === 'english') {
+          if (answer.trim().toLowerCase() === dWord.trim().toLowerCase()) {
+            questionReward();
+          } else {
+            questionPenalty();
+          }
+        } else if (questiontype === 'dutch') {
+          if (answer.trim().toLowerCase() === eWord.trim().toLowerCase()) {
+            questionReward();
+          } else {
+            questionPenalty();
+          }
+        } 
+      } else if (subject === 'Topografie') {
+        if (questiontype === 'netherlands') {
+          if (answer.trim().toLowerCase() === aTopo.trim().toLowerCase()) {
+            questionReward();
+          } else {
+            questionPenalty();
+          }
+        }
       }
     }
   }
@@ -151,6 +198,15 @@ export default function Question() {
       } while (newIndex === currentWordIndex);
 
       setCurrentWordIndex(newIndex);
+    }
+
+    if ( questiontype === 'netherlands') {
+      let newIndex;
+      do {
+        newIndex = getRandom(0,topoQuestions.length - 1);
+      } while (newIndex === currenQuestionIndex);
+
+      setCurrentQuestionIndex(newIndex);
     }
 
     const newQuestionType = getRandom(0,1)
@@ -193,8 +249,6 @@ export default function Question() {
         setCorrectAnswer(newAnswer)
         setQuestionType(newQuestionType)
       }
-    } else if (questiontype === 'fractionpercentage') {
-
     }
 
     setAnswer('')
@@ -217,6 +271,14 @@ export default function Question() {
           <Text style={styles.topText}>Vertaal het woord</Text>
           <Text style={styles.wordHighlight}>{dWord}</Text>
           <Text style={styles.bottomText}>naar het Engels</Text>
+        </View>
+      );
+    }
+
+    if (questiontype === 'netherlands') {
+      return (
+        <View>
+          <Text style={styles.questiontext}>In welke provincie ligt {qTopo}</Text>
         </View>
       );
     }
